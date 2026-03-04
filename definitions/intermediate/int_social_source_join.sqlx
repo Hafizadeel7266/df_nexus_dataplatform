@@ -1,0 +1,65 @@
+config {
+    type: "table",
+    schema: "pds__nexus__all",
+    name: "int_social_source_join",
+    tags: ["pds", "socials"],
+    dependencies: ["int_nexus_api_socials_agg", "int_salesforce_deduplicated"]
+}
+
+SELECT
+  DISTINCT sf_advertiser AS advertiser_name,
+  account,
+  advertising_platform,
+  campaign,
+  campaign_id,
+  sf_campaign_id,
+  package AS package_name,
+  opportunity_name,
+  supplier_name,
+  buying_model,
+  code,
+  r_code,
+  p_code,
+  ad_set,
+  adset_id,
+  ad_name,
+  ad_id,
+  creative_name,
+  conversions_platform,
+  date,
+  start_date,
+  end_date,
+  data_tactic,
+  device_type,
+  days_elapsed,
+  days_remaining,
+  io_days,
+  budget,
+  planned_units,
+  billable_rate_type,
+  io_margin_rate,
+  billable_rate,
+  impressions,
+  spend,
+  video_views_25,
+  video_views_50,
+  video_views_75,
+  video_views_100,
+  link_clicks,
+  conversion_leads,
+  CASE
+    WHEN billable_rate_type LIKE '%CPC%' THEN link_clicks
+    WHEN billable_rate_type = 'CPLE' THEN conversion_leads
+    WHEN billable_rate_type = 'CPM' THEN impressions
+    WHEN billable_rate_type = 'DCPx' THEN impressions
+    ELSE 0
+END
+  AS billable_units
+FROM
+  ${ref("int_nexus_api_socials_agg")} a
+LEFT JOIN
+  ${ref("int_salesforce_deduplicated")} b
+ON
+  ( a.code = b.p_code
+    OR a.code = b.r_code )
+  AND FORMAT_DATE('%Y-%m',a.date) = FORMAT_DATE('%Y-%m',b.start_date)

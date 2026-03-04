@@ -1,0 +1,42 @@
+config {
+    type: "table",
+    schema: "pds__zeta__all",
+    name: "df_nexus_api_zeta",
+    description: "Staged Quantcast data with aggregations by natural keys",
+    tags: ["pds", "staging", "quantcast"]
+}
+
+SELECT
+  'Zeta' AS data_source,
+  'DSP' AS source_type,
+  campaign AS campaign_name,
+  CAST(NULL AS STRING) AS campaign_id,
+  code AS final_xaxis_code,
+  day AS day,
+  CAST(NULL AS STRING) AS creative_name,
+  CAST(NULL AS STRING) AS creative_id,
+  media_buy_name AS mbn,
+  CAST(NULL AS STRING) AS mbk,
+  dsp_impressions AS impressions,
+  dsp_clicks AS clicks,
+  0 AS dsp_media_cost,
+  dsp_total_media_cost AS total_media_cost,
+  0 AS dcpx_spend,
+  dsp_conversions AS conversions,
+  0 AS ct_conversions,
+  0 AS vt_conversions,
+  0 AS revenue,
+  CAST(0 AS STRING) AS activity_name,
+  CAST(0 AS STRING) AS activity_id,
+  0 AS video_completion_25,
+  0 AS video_completion_50,
+  0 AS video_completion_75,
+  dsp_video_fully_played AS video_fully_played,
+  dsp_video_plays AS video_plays,
+  0 AS video_views,
+  0 AS unique_incidents,
+  0 AS blocks,
+  0 AS measured_impressions,
+  0 AS viewable_impressions
+FROM
+  `pds__zeta__all.p_nexus_api_zeta`

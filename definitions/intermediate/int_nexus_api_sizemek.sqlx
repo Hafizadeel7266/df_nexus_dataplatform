@@ -1,0 +1,53 @@
+config {
+    type: "table",
+    schema: "pds__sizemek__all",
+    name: "int_nexus_api_sizemek",
+    description: "Sizmek data aggregated by natural keys",
+    tags: ["pds", "staging", "sizemek"]
+}
+
+SELECT
+  data_source,
+  source_type,
+  campaign_name,
+  campaign_id,
+  final_xaxis_code,
+  day,
+  creative_name,
+  creative_id,
+  mbn,
+  mbk,
+  SUM(impressions) AS impressions,
+  SUM(clicks) AS clicks,
+  SUM(dsp_media_cost) AS dsp_media_cost,
+  SUM(total_media_cost) AS total_media_cost,
+  SUM(dcpx_spend) AS dcpx_spend,
+  SUM(conversions) AS conversions,
+  SUM(ct_conversions) AS ct_conversions,
+  SUM(vt_conversions) AS vt_conversions,
+  SUM(revenue) AS revenue,
+  ANY_VALUE(activity_name) AS activity_name,
+  ANY_VALUE(activity_id) AS activity_id,
+  SUM(video_completion_25) AS video_completion_25,
+  SUM(video_completion_50) AS video_completion_50,
+  SUM(video_completion_75) AS video_completion_75,
+  SUM(video_fully_played) AS video_fully_played,
+  SUM(video_plays) AS video_plays,
+  SUM(video_views) AS video_views,
+  SUM(unique_incidents) AS unique_incidents,
+  SUM(blocks) AS blocks,
+  SUM(measured_impressions) AS measured_impressions,
+  SUM(viewable_impressions) AS viewable_impressions
+FROM
+  ${ref("df_nexus_api_sizemek")}
+GROUP BY
+  data_source,
+  source_type,
+  campaign_name,
+  campaign_id,
+  final_xaxis_code,
+  day,
+  creative_name,
+  creative_id,
+  mbn,
+  mbk

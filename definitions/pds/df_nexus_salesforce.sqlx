@@ -1,0 +1,36 @@
+config {
+    type: "table",
+    schema: "pds__salesforce__all",
+    name: "df_nexus_salesforce",
+    description: "Staged Salesforce data - deduplicated by r_code, p_code, sf_campaign_id",
+    tags: ["pds", "staging", "salesforce"]
+}
+
+SELECT
+  r_code,
+  p_code,
+  start_date,
+  end_date,
+  day,
+  sf_campaign_id AS sf_campaign_id,
+  supplier_name AS supplier_name,
+  buying_model AS buying_model,
+  advertiser_name AS sf_advertiser,
+  opportunity_name AS opportunity_name,
+  package_name AS package,
+  days_elapsed,
+  days_remaining,
+  device_type,
+  media_code,
+  media_type,
+  product_code AS product_code,
+  special_product AS special_product,
+  data_tactic,
+  placement_duration AS io_days,
+  budget,
+  planned_units,
+  billable_rate_type AS billable_rate_type,
+  io_margin_rate AS io_margin_rate,
+  io_rate AS billable_rate
+FROM
+  `pds__salesforce__all.p_nexus_api_salesforce`

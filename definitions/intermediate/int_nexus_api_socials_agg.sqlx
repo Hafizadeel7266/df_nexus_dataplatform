@@ -1,0 +1,47 @@
+config {
+    type: "table",
+    schema: "pds__socials__all",
+    name: "int_nexus_api_socials_agg",
+    tags: ["socials"]
+}
+
+SELECT
+  DISTINCT advertising_platform,
+  account,
+  account_id,
+  campaign,
+  LEFT(campaign, 7) AS code,
+  campaign_id,
+  ad_set,
+  adset_id,
+  ad_name,
+  ad_id,
+  creative_name,
+  currency,
+  conversions_platform,
+  date,
+  SUM(impressions) AS impressions,
+  SUM(spend) AS spend,
+  SUM(video_views_25) AS video_views_25,
+  SUM(video_views_50) AS video_views_50,
+  SUM(video_views_75) AS video_views_75,
+  SUM(video_views_100) AS video_views_100,
+  SUM(link_clicks) AS link_clicks,
+  SUM(conversions_leads) AS conversion_leads
+FROM
+  ${ref("df_nexus_api_socials")}
+GROUP BY
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14

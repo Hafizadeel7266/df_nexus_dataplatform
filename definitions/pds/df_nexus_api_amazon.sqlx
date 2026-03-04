@@ -1,0 +1,42 @@
+config {
+    type: "table",
+    schema: "pds__amazon__all",
+    name: "df_nexus_api_amazon",
+    description: "Staged Amazon DSP data with aggregations by natural keys",
+    tags: ["pds", "staging", "amazon"]
+}
+
+SELECT
+  'Amazon' AS data_source,
+  'DSP' AS source_type,
+  CAST(NULL AS STRING) AS campaign_name,
+  CAST(NULL AS STRING) AS campaign_id,
+  code AS final_xaxis_code,
+  day AS day,
+  creative_name AS creative_name,
+  CAST(creative_id AS STRING) AS creative_id,
+  media_buy_name AS mbn,
+  CAST(media_buy_key AS STRING) AS mbk,
+  dsp_impressions AS impressions,
+  dsp_clicks AS clicks,
+  0 AS dsp_media_cost,
+  dsp_total_media_cost AS total_media_cost,
+  dcpx_spend AS dcpx_spend,
+  0 AS conversions,
+  0 AS ct_conversions,
+  0 AS vt_conversions,
+  0 AS revenue,
+  CAST(0 AS STRING) AS activity_name,
+  CAST(0 AS STRING) AS activity_id,
+  dsp_video_completion_25 AS video_completion_25,
+  dsp_video_completion_50 AS video_completion_50,
+  dsp_video_completion_75 AS video_completion_75,
+  dsp_video_fully_played AS video_fully_played,
+  dsp_video_plays AS video_plays,
+  0 AS video_views,
+  0 AS unique_incidents,
+  0 AS blocks,
+  0 AS measured_impressions,
+  0 AS viewable_impressions
+FROM
+  `pds__amazon__all.p_nexus_api_amazon`

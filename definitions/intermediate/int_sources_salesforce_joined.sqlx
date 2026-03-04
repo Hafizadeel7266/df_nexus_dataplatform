@@ -1,0 +1,143 @@
+config {
+    type: "table",
+    schema: "pds__nexus__all",
+    name: "int_sources_salesforce_joined",
+    description: "Standardized sources joined to Salesforce (r_code / p_code rules + month match)",
+    tags: ["pds", "intermediate", "join", "salesforce"],
+    dependencies: ["int_sources_standardized", "int_salesforce_deduplicated"]
+}
+
+WITH
+  sources AS (
+  SELECT
+    data_source,
+    source_type,
+    day,
+    final_xaxis_code,
+    join_key_type,
+    salesforce_join_key,
+    campaign_name,
+    campaign_id,
+    mbn,
+    mbk,
+    creative_name,
+    creative_id,
+    activity_name,
+    activity_id,
+    impressions,
+    clicks,
+    dsp_media_cost,
+    total_media_cost,
+    dcpx_spend,
+    conversions,
+    ct_conversions,
+    vt_conversions,
+    revenue,
+    video_completion_25,
+    video_completion_50,
+    video_completion_75,
+    video_fully_played,
+    video_plays,
+    video_views,
+    unique_incidents,
+    blocks,
+    measured_impressions,
+    viewable_impressions
+  FROM
+    ${ref("int_sources_standardized")} ),
+  salesforce AS (
+  SELECT
+    r_code,
+    p_code,
+    start_date,
+    end_date,
+    sf_campaign_id,
+    supplier_name,
+    buying_model,
+    sf_advertiser,
+    opportunity_name,
+    package,
+    days_elapsed,
+    days_remaining,
+    device_type,
+    media_code,
+    media_type,
+    product_code,
+    special_product,
+    data_tactic,
+    io_days,
+    budget,
+    planned_units,
+    billable_rate_type,
+    io_margin_rate,
+    billable_rate
+  FROM
+    ${ref("int_salesforce_deduplicated")} )
+SELECT
+  s.data_source,
+  s.source_type,
+  s.day,
+  s.final_xaxis_code,
+  sf.r_code,
+  sf.p_code,
+  sf.start_date,
+  sf.end_date,
+  sf.sf_campaign_id,
+  sf.supplier_name,
+  sf.buying_model,
+  sf.sf_advertiser,
+  sf.opportunity_name,
+  sf.package,
+  sf.days_elapsed,
+  sf.days_remaining,
+  sf.device_type,
+  sf.media_code,
+  sf.media_type,
+  sf.product_code,
+  sf.special_product,
+  sf.data_tactic,
+  sf.io_days,
+  s.campaign_name,
+  s.campaign_id,
+  s.mbn,
+  s.mbk,
+  s.creative_name,
+  s.creative_id,
+  sf.budget,
+  sf.planned_units,
+  sf.billable_rate_type,
+  sf.io_margin_rate,
+  sf.billable_rate,
+  s.impressions,
+  s.clicks,
+  s.dsp_media_cost,
+  s.total_media_cost,
+  s.dcpx_spend,
+  s.conversions,
+  s.ct_conversions,
+  s.vt_conversions,
+  s.revenue,
+  s.activity_name,
+  s.activity_id,
+  s.video_completion_25,
+  s.video_completion_50,
+  s.video_completion_75,
+  s.video_fully_played,
+  s.video_plays,
+  s.video_views,
+  s.unique_incidents,
+  s.blocks,
+  s.measured_impressions,
+  s.viewable_impressions
+FROM
+  sources s
+LEFT JOIN
+  salesforce sf
+ON
+  ( (s.join_key_type = 'r_code'
+      AND LOWER(TRIM(s.salesforce_join_key)) = LOWER(TRIM(sf.r_code)))
+    OR (s.join_key_type = 'p_code'
+      AND LOWER(TRIM(s.salesforce_join_key)) = LOWER(TRIM(sf.p_code)))
+    OR (s.join_key_type = 'coalesce'
+      AND LOWER(TRIM(s.salesforce_join_key)) = LOWER(TRIM(COALESCE(sf.p_code, sf.r_code)))) )
+  AND FORMAT_DATE('%Y-%m', s.day) = FORMAT_DATE('%Y-%m', sf.start_date)

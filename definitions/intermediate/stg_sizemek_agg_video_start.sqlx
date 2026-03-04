@@ -1,0 +1,11 @@
+config {
+    type: "view"
+}
+
+SELECT
+  datasource,
+  SUM(video_started) AS video_started
+FROM
+  ${ref("p_nexus_api_sizemek")}
+GROUP BY
+  1

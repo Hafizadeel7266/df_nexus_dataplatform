@@ -1,0 +1,42 @@
+config {
+    type: "table",
+    schema: "pds__ias__all",
+    name: "df_nexus_api_ias",
+    description: "Staged Quantcast data with aggregations by natural keys",
+    tags: ["pds", "staging", "quantcast"]
+}
+
+SELECT
+  'IAS' AS data_source,
+  'AS' AS source_type,
+  campaign_name AS campaign_name,
+  CAST(campaign_id AS STRING) AS campaign_id,
+  code AS final_xaxis_code,
+  DATE AS day,
+  CAST(NULL AS STRING) AS creative_name,
+  CAST(NULL AS STRING) AS creative_id,
+  MEDIA_BUY_NAME AS mbn,
+  CAST(NULL AS STRING) AS mbk,
+  0 AS impressions,
+  0 AS clicks,
+  0 AS dsp_media_cost,
+  0 AS total_media_cost,
+  0 AS dcpx_spend,
+  0 AS conversions,
+  0 AS ct_conversions,
+  0 AS vt_conversions,
+  0 AS revenue,
+  CAST(0 AS STRING) AS activity_name,
+  CAST(0 AS STRING) AS activity_id,
+  0 AS video_completion_25,
+  0 AS video_completion_50,
+  0 AS video_completion_75,
+  0 AS video_fully_played,
+  0 AS video_plays,
+  0 AS video_views,
+  UNIQUE_INCIDENTS AS unique_incidents,
+  BLOCKS AS blocks,
+  MEASURED_IMPRESSIONS AS measured_impressions,
+  VIEWABLE_IMPRESSIONS AS viewable_impressions
+FROM
+  `pds__ias__all.p_nexus_api_ias`

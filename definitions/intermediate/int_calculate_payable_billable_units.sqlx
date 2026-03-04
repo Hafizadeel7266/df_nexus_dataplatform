@@ -1,0 +1,148 @@
+config {
+    type: "table",
+    schema: "pds__nexus__all",
+    name: "int_calculate_payable_billable_units",
+    description: "Adds advertiser-specific billable_units and payable_units on top of sources + Salesforce join",
+    tags: ["pds", "intermediate", "billing", "units"],
+    dependencies: ["int_sources_salesforce_joined"]
+}
+
+SELECT
+  sf_advertiser,
+  campaign_id,
+  campaign_name,
+  sf_campaign_id,
+  opportunity_name,
+  package,
+  mbk,
+  supplier_name,
+  buying_model,
+  creative_id,
+  creative_name,
+  activity_id,
+  activity_name,
+  media_code,
+  media_type,
+  product_code,
+  special_product,
+  final_xaxis_code,
+  r_code,
+  p_code,
+  day,
+  start_date,
+  end_date,
+  data_source,
+  source_type,
+  mbn,
+  data_tactic,
+  device_type,
+  days_elapsed,
+  days_remaining,
+  io_days,
+  budget,
+  planned_units,
+  billable_rate_type,
+  io_margin_rate,
+  billable_rate,
+  -- billable_units
+  CASE
+    WHEN billable_rate_type = 'CPM' AND source_type = 'DSP' AND product_code = 'Advanced TV - Advanced TV' AND sf_advertiser NOT IN ('Deloitte - US') THEN impressions
+    WHEN billable_rate_type = 'CPM'
+  AND source_type = 'AS'
+  AND product_code = 'Advanced TV - Advanced TV'
+  AND sf_advertiser IN ('Deloitte - US') THEN impressions
+    WHEN billable_rate_type = 'CPM' AND source_type = 'DSP' AND data_source = 'criteo' AND sf_advertiser IN ('Qualcomm - US') THEN impressions
+    WHEN billable_rate_type = 'CPM'
+  AND source_type = 'DSP'
+  AND product_code LIKE '%DOOH%' THEN impressions
+    WHEN sf_advertiser LIKE '%Johnson & Johnson%' AND (billable_rate > 0.2 OR billable_rate < 0.01) AND source_type = 'AS' THEN impressions
+    WHEN sf_advertiser LIKE '%Johnson & Johnson%'
+  AND billable_rate >= 0.01
+  AND billable_rate <= 0.2
+  AND source_type = 'DSP' THEN video_views
+    WHEN billable_rate_type = 'CPA' AND source_type = 'DSP' THEN video_fully_played
+    WHEN (package LIKE '%Citizens Brand 2026 CTV Pause%'
+    OR package LIKE '%Citizens Brand 2026 Amazon NBA League%')
+  AND source_type = 'DSP'
+  AND sf_advertiser IN ('Citizens Bank - US') THEN impressions
+    WHEN sf_advertiser LIKE '%Maersk - US%' AND source_type = 'DSP' THEN impressions
+    WHEN billable_rate_type = 'CPMx'
+  AND source_type = 'DSP' THEN impressions
+    WHEN package LIKE '%Netflix%' AND source_type = 'DSP' AND sf_advertiser IN ('Citizens Bank - US') THEN impressions
+    WHEN package LIKE '%DOOH%'
+  AND source_type = 'DSP'
+  AND sf_advertiser IN ('Circle K - US') THEN impressions
+    WHEN sf_advertiser = 'Chevron - US' AND package LIKE '%_TV%' AND source_type = 'DSP' THEN impressions
+    WHEN sf_advertiser = 'Chevron - US'
+  AND package NOT LIKE '%_TV%'
+  AND billable_rate_type = 'CPM'
+  AND source_type = 'AS' THEN impressions
+    WHEN billable_rate_type = 'CPM' AND source_type = 'AS' AND (sf_advertiser LIKE '%Abbott%' OR sf_advertiser IN ('BP - US', 'Mizkan - US')) THEN impressions - unique_incidents
+    WHEN billable_rate_type = 'CPCV'
+  AND source_type = 'DSP'
+  AND sf_advertiser IN ('Ernst & Young - US') THEN video_fully_played
+    WHEN billable_rate_type = 'DCPM' AND source_type = 'DSP' THEN impressions
+    WHEN billable_rate_type = 'Free'
+  AND source_type = 'AS'
+  AND sf_advertiser IN ('Richemont - US') THEN impressions
+    WHEN billable_rate_type = 'dCPV' AND source_type = 'DSP' THEN video_views
+    WHEN sf_advertiser != 'INEOS Grenadier - US'
+  AND sf_advertiser != 'Discover'
+  AND billable_rate_type = 'CPM'
+  AND source_type = 'AS'
+  AND COALESCE(product_code,'') != 'Advanced TV - Advanced TV'
+  AND COALESCE(product_code,'') NOT LIKE '%DOOH%'
+  AND package NOT LIKE '%Citizens Brand 2026 CTV Pause%'
+  AND package NOT LIKE '%Citizens Brand 2026 Amazon NBA League%' THEN impressions
+    WHEN billable_rate_type = 'dCPM' AND source_type = 'DSP' THEN impressions
+    WHEN billable_rate_type = 'DCPx'
+  AND source_type = 'DSP'
+  AND sf_advertiser NOT LIKE '%Johnson & Johnson%' THEN impressions
+    WHEN billable_rate_type = 'CPCV' AND source_type = 'AS' THEN video_fully_played
+    WHEN billable_rate_type = 'CPMV'
+  AND source_type = 'VP' THEN impressions
+    WHEN billable_rate_type = 'CPV' AND source_type = 'DSP' THEN video_views
+    ELSE 0
+END
+  AS billable_units,
+  -- payable_units
+  CASE
+    WHEN billable_rate_type = 'Free' AND source_type = 'DSP' THEN impressions
+    WHEN billable_rate_type = 'DCPM'
+  AND source_type = 'DSP' THEN impressions
+    WHEN billable_rate_type = 'CPCV' AND source_type = 'AS' THEN impressions
+    WHEN billable_rate_type = 'CPM'
+  AND source_type = 'DSP' THEN impressions
+    WHEN billable_rate_type = 'dCPM' AND source_type = 'DSP' THEN impressions
+    WHEN billable_rate_type = 'DCPx'
+  AND source_type = 'DSP' THEN impressions
+    WHEN billable_rate_type = 'CPMV' AND source_type = 'VP' THEN impressions
+    WHEN billable_rate_type = 'CPV'
+  AND source_type = 'DSP' THEN video_views
+    WHEN billable_rate_type = 'dCPV' AND source_type = 'DSP' THEN video_views
+    WHEN billable_rate_type = 'CPCV'
+  AND source_type = 'DSP' THEN video_fully_played
+    ELSE 0
+END
+  AS payable_units,
+  impressions,
+  clicks,
+  dsp_media_cost,
+  total_media_cost,
+  dcpx_spend,
+  conversions,
+  CAST(ct_conversions AS INT64) AS ct_conversions,
+  CAST(vt_conversions AS INT64) AS vt_conversions,
+  revenue,
+  video_completion_25,
+  video_completion_50,
+  video_completion_75,
+  video_fully_played,
+  video_plays,
+  video_views,
+  unique_incidents,
+  blocks,
+  measured_impressions,
+  viewable_impressions
+FROM
+  ${ref("int_sources_salesforce_joined")}

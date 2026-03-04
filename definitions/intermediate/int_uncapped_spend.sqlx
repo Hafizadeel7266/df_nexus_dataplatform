@@ -1,0 +1,148 @@
+config {
+    type: "table",
+    schema: "pds__nexus__all",
+    name: "int_uncapped_spend",
+    description: "Calculates uncapped_spend on top of billable/payable units",
+    tags: ["pds", "intermediate", "billing", "uncapped_spend"],
+    dependencies: ["int_calculate_payable_billable_units"]
+}
+
+SELECT
+  sf_advertiser,
+  campaign_id,
+  campaign_name,
+  sf_campaign_id,
+  opportunity_name,
+  package,
+  mbk,
+  supplier_name,
+  buying_model,
+  creative_id,
+  creative_name,
+  activity_id,
+  activity_name,
+  media_code,
+  media_type,
+  product_code,
+  special_product,
+  final_xaxis_code,
+  r_code,
+  p_code,
+  day,
+  start_date,
+  end_date,
+  data_source,
+  source_type,
+  mbn,
+  data_tactic,
+  device_type,
+  days_elapsed,
+  days_remaining,
+  io_days,
+  budget,
+  planned_units,
+  billable_rate_type,
+  io_margin_rate,
+  billable_rate,
+  billable_units,
+  payable_units,
+  CASE
+    WHEN billable_rate_type = 'CPM' AND source_type = 'DSP' AND product_code LIKE '%DOOH%' THEN billable_units * billable_rate / 1000
+    WHEN billable_rate_type = 'CPM'
+  AND source_type = 'DSP'
+  AND product_code = 'Advanced TV - Advanced TV' THEN billable_units * billable_rate / 1000
+    WHEN sf_advertiser = 'Chevron - US' AND billable_rate_type = 'CPM' AND source_type = 'AS' AND package NOT LIKE '%_TV%' THEN billable_units * billable_rate / 1000
+    WHEN sf_advertiser LIKE 'Johnson & Johnson%'
+  AND billable_rate >= 0.01
+  AND billable_rate <= 0.2
+  AND source_type = 'DSP' THEN video_views * billable_rate
+    WHEN sf_advertiser LIKE 'Johnson & Johnson%' AND (billable_rate > 0.2 OR billable_rate < 0.01) AND source_type = 'AS' THEN billable_units * billable_rate / 1000
+    WHEN billable_rate_type = 'CPA'
+  AND source_type = 'DSP' THEN billable_rate * billable_units
+    WHEN package IN ( 'P3CFF42_BNL_MIE_006_OLV_WPP MEDIA FLEX SOLNS_VID_PKG_Online Video_VCR_PKG_Nexus_Blended_PKG_A35-64_Premium YouTube_Youtube_Miebo_PKG_30s PKG_Run of Site_Behavioral_P35-64_Site-served_NV_NA', 'P3CFC85_BNL_MIE_006_OLV_WPP MEDIA FLEX SOLNS_VID_PKG_Online Video_VCR_PKG_Nexus_Blended_PKG_A35-64_Premium YouTube_Youtube_Miebo_PKG_15s PKG_Run of Site_Behavioral_P35-64_Site-served_NV_NA', 'P3CG7HH_BNL_MIE_006_Audience_WPP MEDIA FLEX SOLNS_DIS_PKG_High Impact Display_CTR_PKG_Nexus_Blended_PKG_A35-64_Marquee_PKG_Miebo_PKG_PKG_Run of Network_Weather_P35-64_Site-served_NV_NA' ) AND source_type = 'DSP' THEN billable_rate * billable_units / 1000
+    WHEN sf_advertiser LIKE '%Maersk - US%'
+  AND billable_rate_type = 'CPM' THEN billable_units * billable_rate / 1000
+    WHEN billable_rate_type = 'CPM' AND source_type = 'DSP' AND (package LIKE '%Citizens Brand 2026 CTV%' OR package LIKE '%Citizens Brand 2026 Amazon NBA League%') THEN billable_units * billable_rate / 1000
+    WHEN sf_advertiser = 'Chevron - US'
+  AND package LIKE '%_TV%'
+  AND source_type = 'DSP' THEN billable_units * billable_rate / 1000
+    WHEN billable_rate_type = 'CPM' AND source_type = 'AS' THEN billable_units * billable_rate / 1000
+    WHEN sf_advertiser = 'Citizens Bank - US'
+  AND package LIKE '%Netflix%'
+  AND source_type = 'DSP' THEN billable_units * billable_rate / 1000
+    WHEN sf_advertiser = 'Qualcomm - US' AND billable_rate_type = 'CPM' AND source_type = 'DSP' AND data_source = 'criteo' THEN billable_units * billable_rate / 1000
+    WHEN sf_advertiser IN ('INEOS Grenadier - US',
+    'Discover')
+  AND billable_rate_type = 'CPM'
+  AND source_type = 'DSP' THEN billable_units * billable_rate / 1000
+    WHEN sf_advertiser LIKE '%Bausch%' AND billable_rate_type = 'DCPx' AND source_type = 'DSP' AND package LIKE '%P2XL4HR%' THEN total_media_cost / 0.50
+    WHEN sf_advertiser LIKE '%Bausch%'
+  AND day > DATE '2025-01-31'
+  AND day < DATE '2025-05-01'
+  AND source_type = 'DSP'
+  AND UPPER(supplier_name) LIKE '%AMAZON%' THEN total_media_cost / 0.60
+    WHEN sf_advertiser LIKE '%Bausch%' AND day > DATE '2025-04-30' AND source_type = 'DSP' AND UPPER(supplier_name) LIKE '%AMAZON%' THEN billable_units * billable_rate / 1000
+    WHEN sf_advertiser LIKE '%Bausch%'
+  AND billable_rate_type = 'DCPx'
+  AND source_type = 'DSP'
+  AND package LIKE '%P2ZP7HZ%' THEN total_media_cost / 0.52
+    WHEN sf_advertiser LIKE '%Bausch%' AND billable_rate_type = 'DCPx' AND source_type = 'DSP' AND package LIKE '%P2XL4Q2%' THEN total_media_cost / 0.55
+    WHEN sf_advertiser LIKE '%Bausch%'
+  AND billable_rate_type = 'DCPx'
+  AND source_type = 'DSP'
+  AND package LIKE '%P2XMQ0Y%' THEN total_media_cost / 0.77
+    WHEN sf_advertiser LIKE '%Bausch%' AND billable_rate_type = 'DCPx' AND source_type = 'DSP' AND package LIKE '%P2ZHW8H%' THEN total_media_cost / 0.52
+    WHEN sf_advertiser LIKE '%Bausch%'
+  AND billable_rate_type = 'DCPx'
+  AND source_type = 'DSP'
+  AND package LIKE '%P2ZHW97%' THEN total_media_cost / 0.70
+    WHEN sf_advertiser LIKE '%Bausch%' AND billable_rate_type = 'DCPx' AND source_type = 'DSP' AND package LIKE '%P2VYYN2%' THEN total_media_cost / 0.60
+    WHEN LOWER(TRIM(sf_advertiser)) LIKE '%pvh%'
+  AND billable_rate_type = 'DCPx'
+  AND source_type = 'DSP' THEN COALESCE(total_media_cost, 0) / 0.5
+    WHEN LOWER(TRIM(sf_advertiser)) = 'mga entertainment inc - us' AND billable_rate_type = 'dCPV' AND source_type = 'DSP' AND LOWER(TRIM(buying_model)) = 'disclosed' THEN (total_media_cost / (100 - io_margin_rate)) * 100
+    WHEN LOWER(TRIM(sf_advertiser)) LIKE '%pvh%'
+  AND billable_rate_type = 'dCPV'
+  AND source_type = 'DSP'
+  AND (LOWER(TRIM(buying_model)) IN ('non-disclosed margin',
+      'all-inclusive')) THEN COALESCE(total_media_cost, 0) / 0.5
+    WHEN billable_rate_type = 'dCPV' AND source_type = 'DSP' AND (LOWER(TRIM(buying_model)) IN ('non-disclosed margin', 'all-inclusive')) THEN dcpx_spend
+    WHEN billable_rate_type = 'CPCV'
+  AND source_type = 'AS' THEN billable_units * billable_rate
+    WHEN (sf_advertiser LIKE '%Abbott%' OR sf_advertiser LIKE '%PVH%' OR LOWER(TRIM(sf_advertiser)) IN ('citizens bank - us', 'ineos grenadier - us', 'richemont - us', 'boots - us')) AND billable_rate_type = 'CPMx' AND source_type = 'DSP' THEN billable_units * billable_rate / 1000
+    WHEN billable_rate_type = 'CPV'
+  AND source_type = 'DSP' THEN video_views * billable_rate
+    WHEN sf_advertiser = 'Harley-Davidson - US' AND billable_rate_type = 'CPCV' AND source_type = 'DSP' THEN video_views * billable_rate
+    WHEN sf_advertiser IN ('Chevron - US')
+  AND billable_rate_type = 'dCPM'
+  AND source_type = 'DSP'
+  AND (buying_model IN ('Disclosed',
+      'Added Value')) THEN total_media_cost / (1 - (io_margin_rate / 100))
+    WHEN billable_rate_type = 'DCPx' AND source_type = 'DSP' AND sf_advertiser NOT LIKE 'Johnson & Johnson%' THEN dcpx_spend
+    WHEN billable_rate_type = 'CPCV'
+  AND source_type = 'AS' THEN video_fully_played * billable_rate
+    WHEN billable_rate_type = 'CPMV' AND source_type = 'VP' THEN billable_units * billable_rate / 1000
+    ELSE 0
+END
+  AS uncapped_spend,
+  impressions,
+  clicks,
+  dsp_media_cost,
+  total_media_cost,
+  dcpx_spend,
+  conversions,
+  ct_conversions,
+  vt_conversions,
+  revenue,
+  video_completion_25,
+  video_completion_50,
+  video_completion_75,
+  video_fully_played,
+  video_plays,
+  video_views,
+  unique_incidents,
+  blocks,
+  measured_impressions,
+  viewable_impressions
+FROM
+  ${ref("int_calculate_payable_billable_units")}

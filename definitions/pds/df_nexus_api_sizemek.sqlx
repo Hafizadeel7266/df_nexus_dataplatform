@@ -1,0 +1,42 @@
+config {
+    type: "table",
+    schema: "pds__sizemek__all",
+    name: "df_nexus_api_sizemek",
+    description: "Staged DCM/CM360 data with aggregations by natural keys",
+    tags: ["pds", "staging", "sizemek"]
+}
+
+SELECT
+  'Sizmek' AS data_source,
+  'AS' AS source_type,
+  campaign_name AS campaign_name,
+  CAST(campaign_id AS STRING) AS campaign_id,
+  code AS final_xaxis_code,
+  date AS day,
+  CAST(NULL AS STRING) AS creative_name,
+  CAST(NULL AS STRING) AS creative_id,
+  media_buy_name AS mbn,
+  media_buy_key AS mbk,
+  `3pas_impressions` AS impressions,
+  `3pas_clicks` AS clicks,
+  0 AS dsp_media_cost,
+  0 AS total_media_cost,
+  0 AS dcpx_spend,
+  0 AS conversions,
+  0 AS ct_conversions,
+  0 AS vt_conversions,
+  0 AS revenue,
+  CAST(0 AS STRING) AS activity_name,
+  CAST(0 AS STRING) AS activity_id,
+  `3pas_video_completion_25` AS video_completion_25,
+  `3pas_video_completion_50` AS video_completion_50,
+  `3pas_video_completion_75` AS video_completion_75,
+  `3pas_video_fully_played` AS video_fully_played,
+  `3pas_video_plays` AS video_plays,
+  0 AS video_views,
+  0 AS unique_incidents,
+  0 AS blocks,
+  0 AS measured_impressions,
+  0 AS viewable_impressions
+FROM
+  `pds__sizemek__all.p_nexus_api_sizmek`

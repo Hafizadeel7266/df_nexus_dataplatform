@@ -1,0 +1,53 @@
+config {
+    type: "table",
+    schema: "pds__nexus__all",
+    name: "int_supply_deals_datasource_union",
+    tags: ["pds"],
+    dependencies: ["df_nexus_api_dv360_supply", "df_nexus_api_ttd_ui_supply","df_nexus_amazon_api_deals"]
+}
+
+
+
+-- SELECT
+--         'AMAZON' AS DSP,
+--         ORDER_NAME AS CAMPAIGN_ORDER_NAME,
+--         DAY AS DAY,
+--         DEAL_NAME AS DEAL_NAME,
+--         DEAL_ID AS DEAL_ID,
+--         DCPX_SPEND AS MEDIA_SPEND,
+--         DSP_IMPRESSIONS AS IMPRESSIONS,
+--         DSP_CLICKS AS CLICKS,
+--         DSP_VIDEO_PLAYS AS VIDEO_PLAYS,
+--         DSP_VIDEO_FULLY_PLAYED AS VIDEO_COMPLETES
+--     FROM ${ref("df_nexus_amazon_api_deals")}
+
+--     UNION ALL
+
+    SELECT
+        'DV360' AS DSP,
+        INSERTION_ORDER_NAME AS CAMPAIGN_ORDER_NAME,
+        DAY AS DAY,
+        INVENTORY_SOURCE AS DEAL_NAME,
+        INVENTORY_SOURCE_ID AS DEAL_ID,
+        DSP_TOTAL_MEDIA_COST AS MEDIA_SPEND,
+        DSP_IMPRESSIONS AS IMPRESSIONS,
+        DSP_CLICKS AS CLICKS,
+        DSP_VIDEO_PLAYS AS VIDEO_PLAYS,
+        DSP_VIDEO_FULLY_PLAYED  AS VIDEO_COMPLETES
+    FROM ${ref("df_nexus_api_dv360_supply")}
+
+    -- UNION ALL
+
+    -- /* TTD: Inventory Contract / Deal ID */
+    -- SELECT
+    --     'TTD' AS DSP,
+    --     CAMPAIGN AS CAMPAIGN_ORDER_NAME,
+    --     DATE AS DAY,
+    --     INVENTORY_CONTRACT AS DEAL_NAME,
+    --     DEAL_ID AS DEAL_ID,
+    --     DSP_MEDIA_COST AS MEDIA_SPEND,
+    --     DSP_IMPS AS IMPRESSIONS,
+    --     NULL AS CLICKS,
+    --     NULL AS VIDEO_PLAYS,
+    --     DSP_VIDEO_FULLY_PLAYED AS VIDEO_COMPLETES
+    -- FROM ${ref("df_nexus_api_ttd_ui_supply")}

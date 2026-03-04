@@ -1,0 +1,8 @@
+config {
+    type: "table",
+    schema: "pds__amazon__all",
+    name: "df_nexus_amazon_api_deals",
+    tags: ["amazon","deals"]
+
+}
+select * from pds__amazon__all.p_nexus_amazon_api_deals

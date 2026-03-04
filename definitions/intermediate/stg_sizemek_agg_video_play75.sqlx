@@ -1,0 +1,11 @@
+config {
+    type: "view"
+}
+
+SELECT
+  datasource,
+  SUM(video_played_75) AS video_played_75
+FROM
+  ${ref("p_nexus_api_sizemek")}
+GROUP BY
+  1

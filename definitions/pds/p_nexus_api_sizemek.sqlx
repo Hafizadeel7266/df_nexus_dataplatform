@@ -1,0 +1,11 @@
+config {
+    type: "view",
+    assertions: {
+        uniqueKey: ["datasource"]
+    }
+}
+
+SELECT
+  *
+FROM
+  `pds__sizemek__all.p_nexus_api_sizemek`

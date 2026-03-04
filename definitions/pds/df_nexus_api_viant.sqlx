@@ -1,0 +1,42 @@
+config {
+    type: "table",
+    schema: "pds__viant__all",
+    name: "df_nexus_api_viant",
+    description: "Staged Quantcast data with aggregations by natural keys",
+    tags: ["pds", "staging", "quantcast"]
+}
+
+SELECT
+  'Viant' AS data_source,
+  'DSP' AS source_type,
+  CAMPAIGN_NAME AS campaign_name,
+  CAST(CAMPAIGN_ID AS STRING) AS campaign_id,
+  CODE AS final_xaxis_code,
+  DAY AS day,
+  CREATIVE_NAME AS creative_name,
+  CAST(CREATIVE_ID AS STRING) AS creative_id,
+  MEDIA_BUY_NAME AS mbn,
+  CAST(MEDIA_BUY_KEY AS STRING) AS mbk,
+  DSP_IMPRESSIONS AS impressions,
+  DSP_CLICKS AS clicks,
+  0 AS dsp_media_cost,
+  DSP_TOTAL_MEDIA_COST AS total_media_cost,
+  DCPX_SPEND AS dcpx_spend,
+  DSP_CONVERSIONS AS conversions,
+  0 AS ct_conversions,
+  0 AS vt_conversions,
+  0 AS revenue,
+  CAST(0 AS STRING) AS activity_name,
+  CAST(0 AS STRING) AS activity_id,
+  0 AS video_completion_25,
+  0 AS video_completion_50,
+  0 AS video_completion_75,
+  DSP_VIDEO_FULLY_PLAYED AS video_fully_played,
+  0 AS video_plays,
+  0 AS video_views,
+  0 AS unique_incidents,
+  0 AS blocks,
+  0 AS measured_impressions,
+  0 AS viewable_impressions
+FROM
+  `pds__viant__all.p_nexus_api_viant`

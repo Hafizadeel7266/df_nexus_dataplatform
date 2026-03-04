@@ -1,0 +1,66 @@
+config {
+    type: "table",
+    schema: "pds__nexus__all",
+    name: "int_socials_uncapped_spend_calculations",
+    tags: ["pds", "socials"],
+    dependencies: ["int_socials_billable_calculations"]
+}
+
+SELECT
+  DISTINCT advertiser_name,
+  account,
+  advertising_platform,
+  campaign,
+  campaign_id,
+  sf_campaign_id,
+  package_name,
+  opportunity_name,
+  supplier_name,
+  buying_model,
+  code,
+  r_code,
+  p_code,
+  ad_set,
+  adset_id,
+  ad_name,
+  ad_id,
+  creative_name,
+  conversions_platform,
+  date,
+  start_date,
+  end_date,
+  data_tactic,
+  device_type,
+  days_elapsed,
+  days_remaining,
+  io_days,
+  budget,
+  planned_units,
+  billable_rate_type,
+  io_margin_rate,
+  billable_rate,
+  impressions,
+  spend,
+  video_views_25,
+  video_views_50,
+  video_views_75,
+  video_views_100,
+  link_clicks,
+  conversion_leads,
+  billable_units,
+  media_cpc_cpm,
+  gross_cpm_cpc,
+  billable_cpm_cpc,
+  CASE
+    WHEN advertiser_name LIKE '%Qualcomm%' AND billable_rate_type NOT LIKE 'CPLE' THEN billable_cpm_cpc * link_clicks
+    WHEN advertiser_name LIKE '%TruGreen%'
+  AND billable_rate_type NOT LIKE 'CPLE' THEN billable_cpm_cpc * impressions / 1000
+    WHEN billable_rate_type LIKE 'CPLE' THEN billable_rate * billable_units
+    ELSE 0
+END
+  AS uncapped_spend,
+  CURRENT_TIMESTAMP() AS sf_insertion_time
+FROM
+  ${ref("int_socials_billable_calculations")}
+WHERE
+  date IS NOT null

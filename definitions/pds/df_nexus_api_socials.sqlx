@@ -1,0 +1,12 @@
+config {
+    type: "table",
+    schema: "pds__socials__all",
+    name: "df_nexus_api_socials",
+    tags: ["socials"]
+
+}
+
+SELECT
+  *
+FROM
+  `pds__socials__all.p_nexus_api_socials`

@@ -1,0 +1,42 @@
+config {
+    type: "table",
+    schema: "pds__doubleverify__all",
+    name: "df_nexus_api_doubleverify",
+    description: "Staged Quantcast data with aggregations by natural keys",
+    tags: ["pds", "staging", "quantcast"]
+}
+
+SELECT
+  'DoubleVerify' AS data_source,
+  'AS' AS source_type,
+  campaign_name AS campaign_name,
+  CAST(NULL AS STRING) AS campaign_id,
+  code AS final_xaxis_code,
+  day AS day,
+  CAST(NULL AS STRING) AS creative_name,
+  CAST(NULL AS STRING) AS creative_id,
+  media_buy_name AS mbn,
+  CAST(NULL AS STRING) AS mbk,
+  0 AS impressions,
+  0 AS clicks,
+  0 AS dsp_media_cost,
+  0 AS total_media_cost,
+  0 AS dcpx_spend,
+  CAST(0 AS FLOAT64) AS conversions,
+  0 AS ct_conversions,
+  0 AS vt_conversions,
+  CAST(0 AS FLOAT64) AS revenue,
+  CAST(0 AS STRING) AS activity_name,
+  CAST(0 AS STRING) AS activity_id,
+  0 AS video_completion_25,
+  0 AS video_completion_50,
+  0 AS video_completion_75,
+  0 AS video_fully_played,
+  0 AS video_plays,
+  0 AS video_views,
+  unique_incidents AS unique_incidents,
+  blocks AS blocks,
+  measured_impressions AS measured_impressions,
+  impressions_viewable AS viewable_impressions
+FROM
+  `pds__doubleverify__all.p_nexus_api_doubleverify`
